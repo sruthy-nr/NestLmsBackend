@@ -1,7 +1,9 @@
 package com.example.NestLmsBackend.controller;
 
 import com.example.NestLmsBackend.dao.EmployeeDao;
+import com.example.NestLmsBackend.dao.LeaveDao;
 import com.example.NestLmsBackend.model.EmployeeModel;
+import com.example.NestLmsBackend.model.LeaveModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,11 @@ public class EmployeeController {
 
     @Autowired
     EmployeeDao dao;
+
+    @Autowired
+    LeaveDao daol;
+
+
     @CrossOrigin(origins = "*")
     @GetMapping("/")
     public String Homepage(){
@@ -26,6 +33,9 @@ public class EmployeeController {
         HashMap<String,String> map=new HashMap<>();
         dao.save(e);
         map.put("id",String.valueOf(e.getId()));
+        LeaveModel l=new LeaveModel();
+        l.setEmpid(e.getId());
+        daol.save(l);
         map.put("status","success");
         return map;
     }
