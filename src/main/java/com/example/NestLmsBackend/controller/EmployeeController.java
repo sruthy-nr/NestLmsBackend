@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class EmployeeController {
@@ -24,6 +25,7 @@ public class EmployeeController {
     public HashMap<String,String> AddEmployee(@RequestBody EmployeeModel e){
         HashMap<String,String> map=new HashMap<>();
         dao.save(e);
+        map.put("id",String.valueOf(e.getId()));
         map.put("status","success");
         return map;
     }
@@ -34,5 +36,46 @@ public class EmployeeController {
         return (List<EmployeeModel>) dao.findAll();
     }
 
+    @CrossOrigin(origins = "*")
+    @PostMapping(path = "searchemployee", consumes = "application/json", produces = "application/json")
+    public List<EmployeeModel> SearchEmployee(@RequestBody EmployeeModel e){
+        return (List<EmployeeModel>) dao.searchEmployee(e.getEmpcode());
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping(path = "/deleteemployee", consumes = "application/json", produces = "application/json")
+    public HashMap<String,String> DeleteEmployee(@RequestBody EmployeeModel e){
+        String eid=String.valueOf(e.getId());
+        System.out.println(eid);
+        dao.deleteEmployee(e.getId());
+        HashMap<String,String> map=new HashMap<>();
+        map.put("status","success");
+        return map;
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping(path = "/employeelogin", consumes = "application/json", produces = "application/json")
+    public HashMap<String, String> EmployeeLogin(@RequestBody EmployeeModel e) {
+
+        String email = String.valueOf(e.getEmail());
+        String password = String.valueOf(e.getPassword());
+        List<EmployeeModel> result = (List<EmployeeModel>) dao.employeeLogin(email, password);
+        HashMap<String, String> map = new HashMap<>();
+        if(result.size()==0){
+            map.put("status","failed");
+        }
+        else {
+            int id=result.get(0).getId();
+            map.put("empid",String.valueOf(id));
+            map.put("status","success");
+        }
+        return  map;
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping(path = "/viewprofile", consumes = "application/json", produces = "application/json")
+    public List<EmployeeModel> ViewProfile(@RequestBody EmployeeModel e){
+        return (List<EmployeeModel>) dao.viewProfile(e.getId());
+    }
 
 }
