@@ -1,8 +1,6 @@
 package com.example.NestLmsBackend.controller;
 
 import com.example.NestLmsBackend.dao.SecurityDao;
-import com.example.NestLmsBackend.model.EmployeeModel;
-import com.example.NestLmsBackend.model.LeaveModel;
 import com.example.NestLmsBackend.model.SecurityModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
