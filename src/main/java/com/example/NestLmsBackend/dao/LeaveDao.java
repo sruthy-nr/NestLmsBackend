@@ -7,7 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface LeaveDao extends CrudRepository<LeaveModel,Integer> {
+
+    @Query(value = "SELECT `id`, `casual`, `empid`, `sick`, `special`, `year` FROM `leaves` WHERE `empid`=:empid",nativeQuery = true)
+    public List<LeaveModel> numberOfLeaves(@Param("empid") Integer empid);
 
     @Modifying
     @Transactional

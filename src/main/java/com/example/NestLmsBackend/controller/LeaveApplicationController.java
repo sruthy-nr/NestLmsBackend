@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 
 @RestController
 public class LeaveApplicationController {
 
-    public static int casual=20;
-    public static int sick=7;
-    public static int special=3;
+    int casual,sick,special;
 
     @Autowired
     LeaveApplicationDao daol;
@@ -46,17 +46,31 @@ public class LeaveApplicationController {
         daol.leaveApproved(l.getId(),sts);
         List<LeaveApplicationModel> result = (List<LeaveApplicationModel>) daol.leaveType(l.getId());
         l.setLeavetype(result.get(0).getLeavetype());
+
+
+        LocalDate dateBefore = LocalDate.parse(result.get(0).getFromdate());
+        LocalDate dateAfter = LocalDate.parse(result.get(0).getTodate());
+
+        // Approach 1
+        long daysDiff = ChronoUnit.DAYS.between(dateBefore, dateAfter)+1;
+        System.out.println("The number of days between dates: " + daysDiff);
+
+
         LeaveModel lm=new LeaveModel();
-        if (l.getLeavetype()=="casual"){
-            casual--;
+        List<LeaveModel> result1 = (List<LeaveModel>) dao1.numberOfLeaves(result.get(0).getEmpid());
+        casual=result1.get(0).getCasual();
+        sick=result1.get(0).getSick();
+        special=result1.get(0).getSpecial();
+        if (l.getStatus()==1 && l.getLeavetype().equalsIgnoreCase("casual") && daysDiff<=casual){
+            casual= (int) (casual-daysDiff);
             lm.setCasual(casual);
         }
-        else if (l.getLeavetype()=="sick") {
-            sick--;
+        else if (l.getStatus()==1 && result.get(0).getLeavetype().equalsIgnoreCase("sick") && daysDiff<=sick) {
+            sick= (int) (sick-daysDiff);
             lm.setSick(sick);
         }
-        else if (l.getLeavetype()=="special"){
-            special--;
+        else if (l.getStatus()==1 && result.get(0).getLeavetype().equalsIgnoreCase("special") && daysDiff<=special){
+            special=(int) (special-daysDiff);
             lm.setSpecial(special);
         }
         else {
@@ -67,9 +81,9 @@ public class LeaveApplicationController {
             return map;
         }
         dao1.updateLeave(result.get(0).getEmpid(),lm.getCasual(),lm.getSick(),lm.getSpecial());
-        HashMap<String,String> map=new HashMap<>();
-        map.put("status","success");
-        return map;
+        HashMap<String,String> map1=new HashMap<>();
+        map1.put("status","success");
+        return map1;
     }
 
 }
