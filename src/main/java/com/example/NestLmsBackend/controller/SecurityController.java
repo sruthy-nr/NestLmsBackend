@@ -30,7 +30,7 @@ public class SecurityController {
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping(path = "searchSecurity", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = "searchsecurity", consumes = "application/json", produces = "application/json")
     public List<SecurityModel> SearchSecurity(@RequestBody SecurityModel s){
         return (List<SecurityModel>) daos.searchSecurity(s.getSeccode());
     }
