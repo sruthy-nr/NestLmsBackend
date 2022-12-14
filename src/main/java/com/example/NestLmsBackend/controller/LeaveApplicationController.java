@@ -41,9 +41,7 @@ public class LeaveApplicationController {
     @PostMapping(path = "/leaveapproved", consumes = "application/json", produces = "application/json")
     public HashMap<String,String> LeaveApproved(@RequestBody LeaveApplicationModel l){
 
-        l.setStatus(1);
-        int sts= l.getStatus();
-        daol.leaveApproved(l.getId(),sts);
+
         List<LeaveApplicationModel> result = (List<LeaveApplicationModel>) daol.leaveType(l.getId());
         l.setLeavetype(result.get(0).getLeavetype());
 
@@ -61,23 +59,33 @@ public class LeaveApplicationController {
         casual=result1.get(0).getCasual();
         sick=result1.get(0).getSick();
         special=result1.get(0).getSpecial();
-        if (l.getStatus()==1 && l.getLeavetype().equalsIgnoreCase("casual") && daysDiff<=casual){
+        if (l.getLeavetype().equalsIgnoreCase("casual") && daysDiff<=casual){
             casual= (int) (casual-daysDiff);
             lm.setCasual(casual);
+            l.setStatus(1);
+            int sts= l.getStatus();
+            daol.leaveApproved(l.getId(),sts);
         }
-        else if (l.getStatus()==1 && result.get(0).getLeavetype().equalsIgnoreCase("sick") && daysDiff<=sick) {
+        else if (result.get(0).getLeavetype().equalsIgnoreCase("sick") && daysDiff<=sick) {
             sick= (int) (sick-daysDiff);
             lm.setSick(sick);
+            l.setStatus(1);
+            int sts= l.getStatus();
+            daol.leaveApproved(l.getId(),sts);
         }
-        else if (l.getStatus()==1 && result.get(0).getLeavetype().equalsIgnoreCase("special") && daysDiff<=special){
+        else if (result.get(0).getLeavetype().equalsIgnoreCase("special") && daysDiff<=special){
             special=(int) (special-daysDiff);
             lm.setSpecial(special);
+            l.setStatus(1);
+            int sts= l.getStatus();
+            daol.leaveApproved(l.getId(),sts);
         }
         else {
             HashMap<String,String> map=new HashMap<>();
             map.put("leavetype", l.getLeavetype());
             String id=String.valueOf(result.get(0).getEmpid());
             map.put("empid", id);
+            map.put(l.getLeavetype(), "no leaves");
             return map;
         }
         dao1.updateLeave(result.get(0).getEmpid(),lm.getCasual(),lm.getSick(),lm.getSpecial());
