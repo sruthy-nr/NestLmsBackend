@@ -7,10 +7,7 @@ import com.example.NestLmsBackend.model.LeaveApplicationModel;
 import com.example.NestLmsBackend.model.LeaveModel;
 import com.example.NestLmsBackend.model.SecurityModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -35,6 +32,13 @@ public class LeaveApplicationController {
         daol.save(l);
         map.put("status","success");
         return map;
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping(path = "viewleave", consumes = "application/json", produces = "application/json")
+    public List<LeaveApplicationModel> ViewLeave(@RequestBody LeaveApplicationModel l){
+        int sts=0;
+        return (List) daol.viewLeave(sts);
     }
 
     @CrossOrigin(origins = "*")
@@ -85,7 +89,7 @@ public class LeaveApplicationController {
             map.put("leavetype", l.getLeavetype());
             String id=String.valueOf(result.get(0).getEmpid());
             map.put("empid", id);
-            map.put(l.getLeavetype(), "no leaves");
+            map.put("message", "no leaves");
             return map;
         }
         dao1.updateLeave(result.get(0).getEmpid(),lm.getCasual(),lm.getSick(),lm.getSpecial());
@@ -93,5 +97,18 @@ public class LeaveApplicationController {
         map1.put("status","success");
         return map1;
     }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping(path = "/leaverejected", consumes = "application/json", produces = "application/json")
+    public HashMap<String,String> LeaveRejected(@RequestBody LeaveApplicationModel l){
+        l.setStatus(-1);
+        int sts= l.getStatus();
+        daol.leaveRejected(l.getId(),sts);
+        HashMap<String,String> map1=new HashMap<>();
+        map1.put("status","success");
+        return map1;
+    }
+
+
 
 }
