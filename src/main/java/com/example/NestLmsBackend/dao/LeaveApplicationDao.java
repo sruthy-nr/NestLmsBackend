@@ -19,4 +19,12 @@ public interface LeaveApplicationDao extends CrudRepository<LeaveApplicationMode
 
     @Query(value = "SELECT `id`, `applydate`, `empid`, `fromdate`, `leavetype`, `remarks`, `status`, `todate` FROM `leaveapplication` WHERE `id`=:id",nativeQuery = true)
     public List<LeaveApplicationModel> leaveType(@Param("id") Integer id);
+
+    @Query(value = "SELECT l.`id`, l.`applydate`, e.`empcode`, l.`empid`, l.`fromdate`, l.`leavetype`, l.`remarks`, l.`status`, l.`todate` FROM `leaveapplication` AS l JOIN `employee` AS e ON l.`empid`=e.`id` WHERE l.`status`=:sts",nativeQuery = true)
+    public List viewLeave(@Param("sts") Integer sts);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE `leaveapplication` SET `status`= :sts WHERE `id`=:id",nativeQuery = true)
+    public void leaveRejected(@Param("id") Integer id, @Param("sts") Integer sts);
 }
