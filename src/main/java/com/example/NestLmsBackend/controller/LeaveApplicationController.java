@@ -2,6 +2,7 @@ package com.example.NestLmsBackend.controller;
 
 import com.example.NestLmsBackend.dao.LeaveApplicationDao;
 import com.example.NestLmsBackend.dao.LeaveDao;
+import com.example.NestLmsBackend.dao.LogsDao;
 import com.example.NestLmsBackend.model.EmployeeModel;
 import com.example.NestLmsBackend.model.LeaveApplicationModel;
 import com.example.NestLmsBackend.model.LeaveModel;
@@ -24,6 +25,9 @@ public class LeaveApplicationController {
 
     @Autowired
     LeaveDao dao1;
+
+    @Autowired
+    LogsDao daolg;
 
     @CrossOrigin(origins = "*")
     @PostMapping(path = "/applyleave", consumes = "application/json", produces = "application/json")
